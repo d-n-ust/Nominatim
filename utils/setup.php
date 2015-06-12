@@ -666,13 +666,6 @@
 	{
 		echo "Search indices\n";
 
-		echo "run special preparations...\n";
-		pgsqlRunScriptFile(CONST_BasePath.'/sql/special_preparations.sql');
-		echo "-------------------------------------------------------------\n";
-		echo "----------- done special preparations!!!---------------------\n";
-		echo "-------------------------------------------------------------\n";
-
-
 		$bDidSomething = true;
 		$oDB =& getDB();
 		$sSQL = 'select distinct partition from country_name';
@@ -683,7 +676,30 @@
 		}
 		if (!$aCMDResult['no-partitions']) $aPartitions[] = 0;
 
+
+		$s2Template = file_get_contents(CONST_BasePath.'/sql/special_preparations.sql');
+		preg_match_all('#^-- start(.*?)^-- end#ms', $s2Template, $a2Matches, PREG_SET_ORDER);
+
+		foreach($a2Matches as $a2Match)
+		{
+			$s2Result = '';
+			foreach($aPartitions as $sPartitionName)
+			{
+				echo "-partition- $$sPartitionName\n";
+				$sResult .= str_replace('-partition-', $sPartitionName, $a2Match[1]);
+			}
+			$sTemplate = str_replace($a2Match[0], $sResult, $s2Template);
+		}
+
+		echo "run special preparations...\n";
+		pgsqlRunScript($s2Template);
+		echo "-------------------------------------------------------------\n";
+		echo "----------- done special preparations!!!---------------------\n";
+		echo "-------------------------------------------------------------\n";
+
+
 		$sTemplate = file_get_contents(CONST_BasePath.'/sql/indices.src.sql');
+
 		$sTemplate = replace_tablespace('{ts:address-index}',
 		                                CONST_Tablespace_Address_Index, $sTemplate);
 		$sTemplate = replace_tablespace('{ts:search-index}',
@@ -691,16 +707,17 @@
 		$sTemplate = replace_tablespace('{ts:aux-index}',
 		                                CONST_Tablespace_Aux_Index, $sTemplate);
 		preg_match_all('#^-- start(.*?)^-- end#ms', $sTemplate, $aMatches, PREG_SET_ORDER);
+
 		foreach($aMatches as $aMatch)
 		{
 			$sResult = '';
 			foreach($aPartitions as $sPartitionName)
 			{
+				echo "-partition- $$sPartitionName\n";
 				$sResult .= str_replace('-partition-', $sPartitionName, $aMatch[1]);
 			}
 			$sTemplate = str_replace($aMatch[0], $sResult, $sTemplate);
 		}
-
 		pgsqlRunScript($sTemplate);
 	}
 
