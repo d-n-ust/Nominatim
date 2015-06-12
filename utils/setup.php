@@ -145,12 +145,6 @@
 			exit;
 		}
 
-		echo "run special preparations...\n";
-		pgsqlRunScriptFile(CONST_BasePath.'/sql/special_preparations.sql');
-		echo "-------------------------------------------------------------\n";
-		echo "----------- done special preparations!!!---------------------\n";
-		echo "-------------------------------------------------------------\n";
-
 		pgsqlRunScriptFile(CONST_BasePath.'/data/country_name.sql');
 		pgsqlRunScriptFile(CONST_BasePath.'/data/country_naturalearthdata.sql');
 		pgsqlRunScriptFile(CONST_BasePath.'/data/country_osm_grid.sql');
@@ -671,6 +665,14 @@
 	if ($aCMDResult['create-search-indices'] || $aCMDResult['all'])
 	{
 		echo "Search indices\n";
+
+		echo "run special preparations...\n";
+		pgsqlRunScriptFile(CONST_BasePath.'/sql/special_preparations.sql');
+		echo "-------------------------------------------------------------\n";
+		echo "----------- done special preparations!!!---------------------\n";
+		echo "-------------------------------------------------------------\n";
+
+
 		$bDidSomething = true;
 		$oDB =& getDB();
 		$sSQL = 'select distinct partition from country_name';
