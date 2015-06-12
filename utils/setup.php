@@ -686,9 +686,9 @@
 			foreach($aPartitions as $sPartitionName)
 			{
 				echo "-partition- $$sPartitionName\n";
-				$sResult .= str_replace('-partition-', $sPartitionName, $a2Match[1]);
+				$s2Result .= str_replace('-partition-', $sPartitionName, $a2Match[1]);
 			}
-			$sTemplate = str_replace($a2Match[0], $sResult, $s2Template);
+			$sTemplate = str_replace($a2Match[0], $s2Result, $s2Template);
 		}
 
 		echo "run special preparations...\n";
