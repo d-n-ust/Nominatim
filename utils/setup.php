@@ -685,7 +685,6 @@
 			$s2Result = '';
 			foreach($aPartitions as $sPartitionName)
 			{
-				echo "-partition- $$sPartitionName\n";
 				$s2Result .= str_replace('-partition-', $sPartitionName, $a2Match[1]);
 			}
 			$s2Template = str_replace($a2Match[0], $s2Result, $s2Template);
@@ -693,9 +692,7 @@
 
 		echo "run special preparations...\n";
 		pgsqlRunScript($s2Template);
-		echo "-------------------------------------------------------------\n";
-		echo "----------- done special preparations!!!---------------------\n";
-		echo "-------------------------------------------------------------\n";
+		echo "done special preparations!!!\n";
 
 
 		$sTemplate = file_get_contents(CONST_BasePath.'/sql/indices.src.sql');
